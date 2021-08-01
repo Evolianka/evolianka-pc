@@ -7,10 +7,14 @@
                 :key="index" :shortcutData="shortcut"
       />
       <Window class="desktop__window"
+              ref="windows"
               @close-window="closeWindow(index)"
+              @drag="dragHandler(index)"
               v-for="(windowData, index) of activeWindows"
               :windowParams="windowData"
-              :key="windowData.name"
+              :key="windowData.name + index"
+              :eventX="eventX"
+              :eventY="eventY"
       />
     </div>
     <Wallpaper class="desktop__wallpaper"/>
@@ -39,16 +43,46 @@ export default {
         name: "test",
         icon: 'https://pngicon.ru/file/uploads/gory.png',
         fullscreen: true
-      }]
+      },
+        {
+          name: "test-2",
+          icon: 'https://pngicon.ru/file/uploads/gory.png',
+          fullscreen: true
+        }],
+      eventX: 0,
+      eventY: 0
     }
   },
   methods: {
+    dragHandler(index) {
+      this.$refs.windows.forEach(activeWindow => {
+        if ((Number(this.$refs.windows[index].$el.style.zIndex) <= Number(activeWindow.$el.style.zIndex)) && (this.$refs.windows[index] !== activeWindow)) {
+          this.$refs.windows[index].$el.style.zIndex = Number(activeWindow.$el.style.zIndex) + 1
+        }
+      })
+    },
     openWindow(event) {
-      this.activeWindows.push(event)
+      if (!this.activeWindows.includes(event)) this.activeWindows.push(event)
     },
     closeWindow(index) {
       this.activeWindows.splice(index, 1)
+    },
+    initGlobalEventListeners() {
+      window.addEventListener('pointermove', this.changeCord)
+    },
+    destroyGlobalEventListeners() {
+      window.removeEventListener('pointermove', this.changeCord)
+    },
+    changeCord() {
+      this.eventX = event.x
+      this.eventY = event.y
     }
+  },
+  beforeDestroy() {
+    this.destroyGlobalEventListeners()
+  },
+  mounted() {
+    this.initGlobalEventListeners()
   }
 }
 </script>
@@ -59,10 +93,12 @@ export default {
   width: 100vw;
   height: 100vh;
   grid-template-rows: auto min-content;
+
   &__field {
     padding: 10px;
     align-self: start;
   }
+
   &__task-panel {
     align-self: end;
   }
