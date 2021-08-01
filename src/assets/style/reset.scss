@@ -1,0 +1,33 @@
+* {
+  cursor: url("~@/assets/img/cursor/cursor-normal.svg"), default;
+  box-sizing: border-box;
+  user-select: none;
+  &::before, &::after {
+    box-sizing: border-box;
+  }
+  &:focus {
+    outline: none;
+  }
+}
+body {
+  overflow: hidden;
+}
+body, h1, h2, h3, h4, h5, h6, button, ul, ol {
+  padding: 0;
+  margin: 0;
+
+}
+button, a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  background: none;
+  border: none;
+  &:hover {
+    &:not(:disabled) {
+      cursor: url("~@/assets/img/cursor/cursor-pointer.svg"), pointer;
+    }
+  }
+}
