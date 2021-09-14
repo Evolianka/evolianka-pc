@@ -1,7 +1,7 @@
 <template>
   <div @click="checkDoubleClick" class="shortcut">
     <div class="shortcut__icon-wrapp">
-      <img :src="shortcutData.icon" :alt="shortcutData.name" class="shortcut__icon-img">
+      <img :src="shortcutData.iconPath" :alt="shortcutData.name" class="shortcut__icon-img">
     </div>
     <h3 class="shortcut__name">{{shortcutData.name}}</h3>
   </div>

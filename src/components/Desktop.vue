@@ -6,16 +6,15 @@
                 v-for="(shortcut, index) of shortcutsData"
                 :key="index" :shortcutData="shortcut"
       />
-      <Window class="desktop__window"
-              ref="windows"
-              @close-window="closeWindow(index)"
-              @drag="dragHandler(index)"
-              v-for="(windowData, index) of activeWindows"
-              :windowParams="windowData"
-              :key="windowData.name + index"
-              :eventX="eventX"
-              :eventY="eventY"
-      />
+      <keep-alive v-for="(windowData, index) of activeWindows" :key="windowData.name + index">
+        <Window class="desktop__window"
+                ref="windows"
+                @close-window="closeWindow(index)"
+                @drag="dragHandler($event, windowData, index)"
+                @disable-drag="disableDrag(windowData)"
+                :windowParams="windowData"
+        />
+      </keep-alive>
     </div>
     <Wallpaper class="desktop__wallpaper"/>
     <TaskPanel class="desktop__task-panel"/>
@@ -27,6 +26,7 @@ import Window from "@/components/basic/Window";
 import TaskPanel from "@/components/TaskPanel";
 import Wallpaper from "@/components/Wallpaper";
 import Shortcut from "@/components/basic/Shortcut";
+import api from '@/api/desktop'
 
 export default {
   name: 'Desktop',
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       activeWindows: [],
+      dragId: null,
       shortcutsData: [{
         name: "test",
         icon: 'https://pngicon.ru/file/uploads/gory.png',
@@ -54,17 +55,46 @@ export default {
     }
   },
   methods: {
-    dragHandler(index) {
-      this.$refs.windows.forEach(activeWindow => {
-        if ((Number(this.$refs.windows[index].$el.style.zIndex) <= Number(activeWindow.$el.style.zIndex)) && (this.$refs.windows[index] !== activeWindow)) {
-          this.$refs.windows[index].$el.style.zIndex = Number(activeWindow.$el.style.zIndex) + 1
+    disableDrag(windowData) {
+      this.dragId = null
+      windowData.startPosX = 0
+      windowData.startPosY = 0
+      windowData.prevTranslateX = this.translatePosX
+      windowData.prevTranslateY = this.translatePosY
+    },
+    dragHandler(event, windowData, index) {
+      this.dragId = index
+      windowData.startPosX = event.pageX
+      windowData.startPosY = event.pageY
+      windowData.prevTranslateX = windowData.translatePosX
+      windowData.prevTranslateY = windowData.translatePosY
+      this.activeWindows.forEach(activeWindow => {
+        if (this.activeWindows[index].zIndex <= activeWindow.zIndex && (this.activeWindows[index] !== activeWindow)) {
+          this.activeWindows[index].zIndex = activeWindow.zIndex + 1
         }
       })
     },
-    openWindow(event) {
-      if (!this.activeWindows.includes(event)) this.activeWindows.push(event)
+    prepareTransform(index) {
+      if (this.dragId !== null) {
+        console.log('ok')
+        const windowData = this.activeWindows[index]
+        windowData.translatePosX = windowData.prevTranslateX === 0 ? this.eventX - windowData.startPosX : windowData.prevTranslateX + (event.x - windowData.startPosX)
+        windowData.translatePosY = windowData.prevTranslateY === 0 ? this.eventY - windowData.startPosY : windowData.prevTranslateY + (event.y - windowData.startPosY)
+      }
     },
-    closeWindow(index) {
+    openWindow(event) {
+      if (!this.activeWindows.includes(event)) {
+        this.$set(event, 'translatePosX', 0)
+        this.$set(event, 'translatePosY', 0)
+        this.$set(event, 'startPosX', 0)
+        this.$set(event, 'startPosY', 0)
+        this.$set(event, 'prevTranslateX', 0)
+        this.$set(event, 'prevTranslateY', 0)
+        this.$set(event, 'zIndex', 0)
+        this.activeWindows.push(event)
+      }
+    },
+    closeWindow: function (index) {
       this.activeWindows.splice(index, 1)
     },
     initGlobalEventListeners() {
@@ -73,9 +103,17 @@ export default {
     destroyGlobalEventListeners() {
       window.removeEventListener('pointermove', this.changeCord)
     },
-    changeCord() {
+    changeCord(event) {
       this.eventX = event.x
       this.eventY = event.y
+      this.prepareTransform(this.dragId)
+    },
+    async getData() {
+      try {
+        this.shortcutsData = await api.getShortcuts()
+      } catch (e) {
+        throw e
+      }
     }
   },
   beforeDestroy() {
@@ -83,6 +121,7 @@ export default {
   },
   mounted() {
     this.initGlobalEventListeners()
+    this.getData()
   }
 }
 </script>
