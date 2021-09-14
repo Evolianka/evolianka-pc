@@ -6,15 +6,17 @@
                 v-for="(shortcut, index) of shortcutsData"
                 :key="index" :shortcutData="shortcut"
       />
-      <keep-alive v-for="(windowData, index) of activeWindows" :key="windowData.name + index">
-        <Window class="desktop__window"
-                ref="windows"
-                @close-window="closeWindow(index)"
-                @drag="dragHandler($event, windowData, index)"
-                @disable-drag="disableDrag(windowData)"
-                :windowParams="windowData"
-        />
-      </keep-alive>
+
+      <Window class="desktop__window"
+              v-for="(windowData, index) of activeWindows"
+              :key="windowData.name + index"
+              ref="windows"
+              @close-window="closeWindow(index)"
+              @drag="dragHandler($event, windowData, index)"
+              @disable-drag="disableDrag(windowData)"
+              :windowParams="windowData"
+      />
+
     </div>
     <Wallpaper class="desktop__wallpaper"/>
     <TaskPanel class="desktop__task-panel"/>
