@@ -1,10 +1,12 @@
 <template>
-  <div class="object-wrapper window">
-    <div @mousemove.self="drag" @mousedown.self="allowDrag" @mouseup.self="disableDrag" @mouseleave="disableDrag"
+  <div
+      :style="{transform: `translate(${windowParams.translatePosX}px, ${windowParams.translatePosY}px)`, zIndex: windowParams.zIndex}"
+      class="object-wrapper window">
+    <div @mousedown.self="allowDrag" @mouseup.self="disableDrag"
          class="window__header">
-      <div v-if="windowParams.name || windowParams.icon" class="window__title">
-        <div v-if="windowParams.icon" class="window__icon">
-          <img :src="windowParams.icon" :alt="windowParams.name" class="window__icon-img">
+      <div v-if="windowParams.name || windowParams.iconPath" class="window__title">
+        <div v-if="windowParams.iconPath" class="window__icon">
+          <img :src="windowParams.iconPath" :alt="windowParams.name" class="window__icon-img">
         </div>
         <h3 v-if="windowParams.name" class="window__name">{{ windowParams.name }}</h3>
       </div>
@@ -49,41 +51,20 @@ export default {
     }
   },
   data() {
-    return {
-      startPosX: 0,
-      startPosY: 0,
-      translatePosX: 0,
-      translatePosY: 0,
-      prevTranslateX: 0,
-      prevTranslateY: 0,
-      dragging: false
-    }
+    return {}
   },
   methods: {
     disableDrag() {
-      this.dragging = false
-      this.startPosX = 0
-      this.startPosY = 0
-      this.prevTranslateX = this.translatePosX
-      this.prevTranslateY = this.translatePosY
-      this.$el.style.zIndex = '0'
+      this.$emit('disable-drag')
     },
     allowDrag(event) {
-      this.dragging = true
-      this.startPosX = event.pageX
-      this.startPosY = event.pageY
-    },
-    drag(event) {
-      if (this.dragging) {
-        this.$el.style.zIndex = '10'
-        this.translatePosX = this.prevTranslateX === 0 ? event.x - this.startPosX : this.prevTranslateX + (event.x - this.startPosX)
-        this.translatePosY = this.prevTranslateY === 0 ? event.y - this.startPosY : this.prevTranslateY + (event.y - this.startPosY)
-        this.$el.style.transform = `translate(${this.translatePosX}px, ${this.translatePosY}px)`
-      }
+      this.$emit('drag', event)
     },
     closeWindow() {
       this.$emit('close-window', this.windowParams)
     }
+  },
+  mounted() {
   }
 }
 </script>
