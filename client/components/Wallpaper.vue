@@ -62,7 +62,7 @@ export default {
     },
     createPlane() {
       this.geometry = new THREE.PlaneBufferGeometry(100, 100, 1, 1);
-      this.texture1 = new THREE.TextureLoader().load(require('@/assets/img/wallpaper/bg.png'))
+      this.texture1 = new THREE.TextureLoader().load(require('../assets/img/wallpaper/bg.png'))
       this.texture1.wrapS = THREE.RepeatWrapping;
       this.texture1.wrapT = THREE.RepeatWrapping;
       this.texture1.repeat.set(10, 10);

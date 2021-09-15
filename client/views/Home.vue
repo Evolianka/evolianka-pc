@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Desktop from "@/components/Desktop";
+import Desktop from "../components/Desktop";
 export default {
   name: 'Home',
   components: {

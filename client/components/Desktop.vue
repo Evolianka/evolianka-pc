@@ -24,11 +24,11 @@
 </template>
 
 <script>
-import Window from "@/components/basic/Window";
-import TaskPanel from "@/components/TaskPanel";
-import Wallpaper from "@/components/Wallpaper";
-import Shortcut from "@/components/basic/Shortcut";
-import api from '@/api/desktop'
+import Window from "./basic/Window";
+import TaskPanel from "./TaskPanel";
+import Wallpaper from "./Wallpaper";
+import Shortcut from "./basic/Shortcut";
+import api from '../api/desktop'
 
 export default {
   name: 'Desktop',
