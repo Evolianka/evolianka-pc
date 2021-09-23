@@ -112,7 +112,9 @@ export default {
     },
     async getData() {
       try {
-        this.shortcutsData = await api.getShortcuts()
+        const data = await api.getShortcuts()
+        this.shortcutsData = data.shortcuts
+        this.$cookies.set('x-token', data.newToken)
       } catch (e) {
         throw e
       }

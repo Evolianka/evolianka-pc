@@ -14,7 +14,7 @@ const serverConfig = {
     externals: nodeExternals({
         allowlist: /\.css$/
     }),
-    optimization: { splitChunks: false },
+    optimization: {splitChunks: false},
     plugins: [
         new VueSSRServerPlugin()
     ],
@@ -23,15 +23,19 @@ const serverConfig = {
         alias: {
             '@': path.join(__dirname, 'client')
         }
+    },
+    devServer: {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+        }
     }
 }
 
 const clientConfig = {
     entry: './client/entry-client.js',
     target: 'web',
-    output: {
-        filename: '[name].js'
-    },
     plugins: [new webpack.HotModuleReplacementPlugin(), new VueSSRClientPlugin()],
     devtool: 'source-map',
     devServer: {
@@ -44,7 +48,7 @@ const clientConfig = {
         port: 9999,
         headers: {
             'Access-Control-Allow-Origin': '*'
-        }
+        },
     },
     resolve: {
         extensions: ['.js', '.vue', '.json', '.scss', '.css'],
@@ -55,6 +59,8 @@ const clientConfig = {
 }
 
 module.exports = {
+    assetsDir: './static',
+    filenameHashing: false,
     chainWebpack: config => {
         config.module
             .rule('url-loader')

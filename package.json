@@ -11,13 +11,17 @@
     "start": "node server/server.js"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.5",
     "core-js": "^3.6.5",
     "cross-env": "^7.0.3",
+    "crypto-js": "^4.1.1",
     "express": "^4.17.1",
     "nodemon": "^2.0.12",
     "npm-run-all": "^4.1.5",
     "three": "^0.131.1",
+    "uniqid": "^5.4.0",
     "vue": "^2.6.11",
+    "vue-cookies": "^1.7.4",
     "vue-hot-reload-api": "^2.3.4",
     "vue-meta": "^2.4.0",
     "vue-router": "^3.2.0",

@@ -2,7 +2,8 @@
   "verbose": false,
   "watch": [
     "dist/vue-ssr-server-bundle.json",
-    "./server/server.js"
+    "./server/server.js",
+    "./server/middleware"
   ],
   "ext": "json,js"
 }

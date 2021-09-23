@@ -10,6 +10,7 @@ Vue.use(VueMeta)
 export function createRouter() {
   return new VueRouter({
     mode: 'history',
+    base: '/',
     routes: [
       {
         path: '/',
